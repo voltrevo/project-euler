@@ -1,0 +1,14 @@
+{
+    "version": "1.0.0",
+    "summary": "Project Euler solutions in Elm",
+    "repository": "https://github.com/voltrevo/project-euler.git",
+    "license": "MIT",
+    "source-directories": [
+        "."
+    ],
+    "exposed-modules": [],
+    "dependencies": {
+        "elm-lang/core": "4.0.5 <= v < 5.0.0"
+    },
+    "elm-version": "0.17.1 <= v < 0.18.0"
+}
