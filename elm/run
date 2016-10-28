@@ -1,0 +1,7 @@
+#!/bin/bash
+
+TMP_FILE=/tmp/$RANDOM$RANDOM.js
+
+elm-make solutions/$1.elm --output $TMP_FILE
+node $TMP_FILE
+rm $TMP_FILE
