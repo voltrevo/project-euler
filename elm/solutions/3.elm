@@ -21,15 +21,18 @@ answer =
     , factors = []
     , i = 2
     }
-    (\state -> (.n state) /= 1)
-    (\state ->
-      if floatMod (.n state) (.i state) == 0 then
-        { n = (.n state) / (.i state)
-        , factors = (.i state) :: (.factors state)
-        , i = .i state
+    (.n >> (/=) 1)
+    (\{n, factors, i} ->
+      if floatMod n i == 0 then
+        { n = n / i
+        , factors = i :: factors
+        , i = i
         }
       else
-        { state | i = (.i state) + 1 }
+        { n = n
+        , factors = factors
+        , i = i + 1
+        }
     )
   )
     |> .factors
