@@ -1,4 +1,12 @@
-module Primes exposing (start, increment)
+module Primes exposing
+  ( start
+  , increment
+  , factorize
+  , defactorize
+  , hcfFactors
+  , lcmFactors
+  , hcf
+  , lcm)
 
 
 import Array
@@ -6,6 +14,7 @@ import Array
 
 import ArrayExtras
 import MaybeExtras exposing (unmaybe)
+import ListExtras
 import Loop exposing (loop)
 
 
@@ -37,3 +46,92 @@ increment primes =
       next
     )
       |> \(primes, p) -> Array.push p primes
+
+
+factorize : Int -> List (Int, Int)
+factorize n =
+  (loop
+    { primes = start
+    , factors = []
+    , rem = n
+    }
+    (.rem >> (/=) 1)
+    (\{primes, factors, rem} ->
+      let p = ArrayExtras.last primes |> unmaybe
+      in if rem % p == 0 then
+        { primes = primes
+        , factors = p :: factors
+        , rem = rem // p
+        }
+      else
+        { primes = increment primes
+        , factors = factors
+        , rem = rem
+        }
+    )
+  )
+    |> .factors
+    |> List.reverse
+    |> ListExtras.uniqCounts
+
+
+defactorize : List (Int, Int) -> Int
+defactorize =
+  List.map (\(prime, power) -> prime ^ power)
+  >> List.foldl (*) 1
+
+
+hcfFactors
+  : List (comparable, comparable)
+  -> List (comparable, comparable)
+  -> List (comparable', comparable)
+hcfFactors leftFactors rightFactors =
+  case (leftFactors, rightFactors) of
+    ([], []) ->
+      []
+    (leftHead :: leftTail, []) ->
+      []
+    ([], rightHead :: rightTail) ->
+      []
+    ((leftPrime, leftPower) :: leftTail, (rightPrime, rightPower) :: rightTail) ->
+      case compare leftPrime rightPrime of
+        LT ->
+          hcfFactors leftTail rightFactors
+        GT ->
+          hcfFactors leftFactors rightTail
+        EQ ->
+          (leftPower, min leftPower rightPower) :: hcfFactors leftTail rightTail
+
+
+lcmFactors
+  : List (comparable, comparable)
+  -> List (comparable, comparable)
+  -> List (comparable', comparable)
+lcmFactors leftFactors rightFactors =
+  case (leftFactors, rightFactors) of
+    ([], []) ->
+      []
+    (leftHead :: leftTail, []) ->
+      leftFactors
+    ([], rightHead :: rightTail) ->
+      rightFactors
+    ((leftPrime, leftPower) :: leftTail, (rightPrime, rightPower) :: rightTail) ->
+      case compare leftPrime rightPrime of
+        LT ->
+          (leftPrime, leftPower) :: lcmFactors leftTail rightFactors
+        GT ->
+          (rightPrime, rightPower) :: lcmFactors leftFactors rightTail
+        EQ ->
+          (leftPrime, max leftPower rightPower) :: lcmFactors leftTail rightTail
+
+
+hcf : Int -> Int -> Int
+hcf m n =
+  hcfFactors (factorize m) (factorize n)
+  |> defactorize
+
+
+lcm : Int -> Int -> Int
+lcm m n =
+  lcmFactors (factorize m) (factorize n)
+  |> defactorize
