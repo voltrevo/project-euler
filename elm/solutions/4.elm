@@ -1,24 +1,19 @@
 import Debug
 
 
-import Loop exposing (loop)
 import ListExtras
 
 
 toDigitList : Int -> List Int
 toDigitList n =
-  (loop
-    { digits = []
-    , rem = n
-    }
-    (\state -> (.rem state) /= 0)
-    (\state ->
-      { digits = (.rem state % 10) :: (.digits state)
-      , rem = (.rem state) // 10
-      }
-    )
-  )
-    |> .digits
+  let
+    digit = n % 10
+    rem = n // 10
+  in
+    digit :: if rem == 0 then
+      []
+    else
+      toDigitList rem
 
 
 isPalindrome : Int -> Bool
