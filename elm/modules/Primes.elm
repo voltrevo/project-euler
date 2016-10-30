@@ -2,6 +2,7 @@ module Primes exposing
   ( start
   , increment
   , factorize
+  , factorizeFloat
   , defactorize
   , hcfFactors
   , lcmFactors
@@ -48,8 +49,12 @@ increment primes =
       |> \(primes, p) -> Array.push p primes
 
 
-factorize : Int -> List (Int, Int)
-factorize n =
+factorizeGeneral
+  : (number -> Int -> number)
+  -> (number -> Int -> number)
+  -> number
+  -> List (Int, Int)
+factorizeGeneral mod div n =
   (loop
     { primes = start
     , factors = []
@@ -58,10 +63,10 @@ factorize n =
     (.rem >> (/=) 1)
     (\{primes, factors, rem} ->
       let p = ArrayExtras.last primes |> unmaybe
-      in if rem % p == 0 then
+      in if mod rem p == 0 then
         { primes = primes
         , factors = p :: factors
-        , rem = rem // p
+        , rem = div rem p
         }
       else
         { primes = increment primes
@@ -73,6 +78,25 @@ factorize n =
     |> .factors
     |> List.reverse
     |> ListExtras.uniqCounts
+
+
+factorize : Int -> List (Int, Int)
+factorize = factorizeGeneral (%) (//)
+
+
+factorizeFloat : Float -> List (Int, Int)
+factorizeFloat =
+  let
+    mod =
+      (\n -> \d ->
+        let fd = toFloat d
+        in (n / fd - toFloat (floor (n / fd))) * fd
+          |> round
+          |> toFloat
+      )
+    div = \n -> \d -> n / (toFloat d) |> floor |> toFloat
+  in
+    factorizeGeneral mod div
 
 
 defactorize : List (Int, Int) -> Int

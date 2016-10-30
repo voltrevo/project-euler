@@ -1,35 +1,14 @@
 import Debug
 
 
-import Loop exposing (loop)
+import Primes
+import MaybeExtras exposing (passMaybe1)
 
 
-floatMod : Float -> Float -> Float
-floatMod a b =
-  floor(a) % floor(b) |> toFloat
-
-
-answer : Maybe Float
+answer : Maybe Int
 answer =
-  (loop
-    { n = 600851475143
-    , factors = []
-    , i = 2
-    }
-    (.n >> (/=) 1)
-    (\{n, factors, i} ->
-      if floatMod n i == 0 then
-        { n = n / i
-        , factors = i :: factors
-        , i = i
-        }
-      else
-        { n = n
-        , factors = factors
-        , i = i + 1
-        }
-    )
-  )
-    |> .factors
-    |> List.head
-    |> Debug.log "answer"
+  Primes.factorizeFloat 600851475143
+  |> List.reverse
+  |> List.head
+  |> passMaybe1 fst
+  |> Debug.log "answer"

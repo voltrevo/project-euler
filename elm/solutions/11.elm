@@ -3,6 +3,7 @@ import Debug
 
 
 import ListExtras
+import MaybeExtras exposing (passMaybe2)
 
 
 grid : Array.Array (Array.Array Int)
@@ -37,22 +38,9 @@ gridGet (i, j) =
   grid |> Array.get i |> flip Maybe.andThen (Array.get j)
 
 
-passMaybe : (a -> b -> a) -> (Maybe a -> Maybe b -> Maybe a)
-passMaybe fn x y =
-  case x of
-    Nothing ->
-      Nothing
-    Just xx ->
-      case y of
-        Nothing ->
-          Nothing
-        Just yy ->
-          Just (fn xx yy)
-
-
 maybeProduct : List (Maybe number) -> Maybe number
 maybeProduct list =
-  List.foldl (passMaybe (*)) (Just 1) list
+  List.foldl (passMaybe2 (*)) (Just 1) list
 
 
 maxRowProduct : ((number, number) -> Maybe number) -> Maybe number
@@ -66,7 +54,7 @@ maxRowProduct get =
         , get (i, j + 3)
         ]
       )
-    |> List.foldl (passMaybe max) (Just 0)
+    |> List.foldl (passMaybe2 max) (Just 0)
 
 
 maxDiagProduct : ((number, number) -> Maybe number) -> Maybe number
@@ -80,7 +68,7 @@ maxDiagProduct get =
         , get (i + 3, j + 3)
         ]
       )
-    |> List.foldl (passMaybe max) (Just 0)
+    |> List.foldl (passMaybe2 max) (Just 0)
 
 
 answer : Maybe Int
@@ -90,5 +78,5 @@ answer =
   , maxDiagProduct gridGet
   , maxDiagProduct (\(i, j) -> gridGet (i, 19 - j))
   ]
-    |> List.foldl (passMaybe max) (Just 0)
+    |> List.foldl (passMaybe2 max) (Just 0)
     |> Debug.log "answer"
