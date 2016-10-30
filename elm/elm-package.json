@@ -4,7 +4,7 @@
     "repository": "https://github.com/voltrevo/project-euler.git",
     "license": "MIT",
     "source-directories": [
-        "."
+        "modules"
     ],
     "exposed-modules": [],
     "dependencies": {

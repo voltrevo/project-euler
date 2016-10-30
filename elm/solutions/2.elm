@@ -1,6 +1,9 @@
 import Debug
 
 
+import Loop exposing (loop)
+
+
 type alias Fib =
   { last: Int
   , curr: Int
@@ -19,14 +22,6 @@ fibNext fib =
   { last = .curr fib
   , curr = (.last fib) + (.curr fib)
   }
-
-
-loop : state -> (state -> Bool) -> (state -> state) -> state
-loop curr test iter =
-  if test curr then
-    loop (iter curr) test iter
-  else
-    curr
 
 
 answer : Int
