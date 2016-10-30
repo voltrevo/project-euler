@@ -1,6 +1,8 @@
-import Char
 import Debug
 import String
+
+
+import Big
 
 
 nums : List String
@@ -108,40 +110,11 @@ nums =
   ]
 
 
-bigAdd : Int -> List Int -> List Int -> List Int
-bigAdd carry m n =
-  case (m, n) of
-    ([], []) ->
-      if carry == 0 then
-        []
-      else
-        [carry]
-    _ ->
-      let
-        head = List.head >> Maybe.withDefault 0
-        tail = List.tail >> Maybe.withDefault []
-        headSum = carry + (head m) + (head n)
-      in
-        headSum % 10 :: bigAdd (headSum // 10) (tail m) (tail n)
-
-
-toDigit : Char -> Int
-toDigit c =
-  (Char.toCode c) - (Char.toCode '0')
-
-
-fromDigit : Int -> Char
-fromDigit d =
-  Char.fromCode ((Char.toCode '0') + d)
-
-
 answer : String
 answer =
   nums
-    |> List.map (String.toList >> List.map toDigit >> List.reverse)
-    |> List.foldl (bigAdd 0) []
-    |> List.reverse
-    |> List.take 10
-    |> List.map fromDigit
-    |> String.fromList
+    |> List.map Big.fromString
+    |> List.foldl Big.add (Big.fromString "0")
+    |> Big.asString
+    |> String.slice 0 10
     |> Debug.log "answer"
