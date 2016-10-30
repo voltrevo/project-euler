@@ -2,6 +2,9 @@ import Array
 import Debug
 
 
+import ListExtras
+
+
 grid : Array.Array (Array.Array Int)
 grid =
   [ [08, 02, 22, 97, 38, 15, 00, 40, 00, 75, 04, 05, 07, 78, 52, 12, 50, 77, 91, 08]
@@ -34,17 +37,6 @@ gridGet (i, j) =
   grid |> Array.get i |> flip Maybe.andThen (Array.get j)
 
 
-listProduct : List a -> List b -> List (a, b)
-listProduct l1 l2 =
-  (List.map
-    (\i ->
-      List.map (\j -> (i, j)) l2
-    )
-    l1
-  )
-    |> List.concat
-
-
 passMaybe : (a -> b -> a) -> (Maybe a -> Maybe b -> Maybe a)
 passMaybe fn x y =
   case x of
@@ -65,7 +57,7 @@ maybeProduct list =
 
 maxRowProduct : ((number, number) -> Maybe number) -> Maybe number
 maxRowProduct get =
-  listProduct [0..19] [0..15]
+  ListExtras.product [0..19] [0..15]
     |> List.map
       (\(i, j) -> maybeProduct
         [ get (i, j)
@@ -79,7 +71,7 @@ maxRowProduct get =
 
 maxDiagProduct : ((number, number) -> Maybe number) -> Maybe number
 maxDiagProduct get =
-  listProduct [0..15] [0..15]
+  ListExtras.product [0..15] [0..15]
     |> List.map
       (\(i, j) -> maybeProduct
         [ get (i, j)

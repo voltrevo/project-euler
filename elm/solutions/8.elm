@@ -3,6 +3,9 @@ import Debug
 import String
 
 
+import ListExtras
+
+
 digits : List Int
 digits =
   "73167176531330624919225119674426574742355349194934" ++
@@ -29,32 +32,10 @@ digits =
   |> List.map (\c -> (Char.toCode c) - (Char.toCode '0'))
 
 
-listTails : List a -> List (List a)
-listTails list =
-  let
-    loop (oldListMaybe, newList) =
-      case oldListMaybe of
-        Nothing ->
-          newList
-        Just oldList ->
-          loop (List.tail oldList, oldList :: newList)
-  in
-    loop (Just list, [])
-
-
-window : Int -> List a -> List (List a)
-window size list =
-  list
-  |> listTails
-  |> List.map (List.take size)
-  |> List.filter (List.length >> ((==) size))
-
-
 answer : Maybe Int
 answer =
   digits
-  |> window 13
+  |> ListExtras.window 13
   |> List.map List.product
   |> List.maximum
   |> Debug.log "answer"
-
