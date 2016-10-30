@@ -1,4 +1,4 @@
-module Big exposing (Big, fromInt, fromString, asString, add)
+module Big exposing (Big, fromInt, fromString, asString, asDigits, add)
 
 
 import Char
@@ -62,3 +62,8 @@ asString (Big list) =
     |> List.reverse
     |> List.map fromDigit
     |> String.fromList
+
+
+asDigits : Big -> List Int
+asDigits (Big list) =
+  List.reverse list
