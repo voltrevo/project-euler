@@ -7,7 +7,8 @@ module Primes exposing
   , hcfFactors
   , lcmFactors
   , hcf
-  , lcm)
+  , lcm
+  , divisorCount)
 
 
 import Array
@@ -159,3 +160,10 @@ lcm : Int -> Int -> Int
 lcm m n =
   lcmFactors (factorize m) (factorize n)
   |> defactorize
+
+
+divisorCount : Int -> Int
+divisorCount n =
+  factorize n
+    |> List.map (snd >> (+) 1)
+    |> List.foldl (*) 1
