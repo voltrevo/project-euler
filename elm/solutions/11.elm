@@ -29,11 +29,9 @@ grid =
     |> Array.fromList
 
 
--- gridGet : (Int, Int) -> Maybe Int
--- gridGet (i, j) =
---   grid |> Array.get i |> flip Maybe.andThen (Array.get j)
-
-gridGet (i, j) = Just 5
+gridGet : (Int, Int) -> Maybe Int
+gridGet (i, j) =
+  grid |> Array.get i |> flip Maybe.andThen (Array.get j)
 
 
 listProduct : List a -> List b -> List (a, b)
@@ -62,7 +60,7 @@ passMaybe fn x y =
 
 maybeProduct : List (Maybe number) -> Maybe number
 maybeProduct list =
-  List.foldl (passMaybe (*)) (Just 0) list
+  List.foldl (passMaybe (*)) (Just 1) list
 
 
 maxRowProduct : ((number, number) -> Maybe number) -> Maybe number
@@ -95,7 +93,7 @@ maxDiagProduct get =
 
 answer : Maybe Int
 answer =
-  [ Debug.log "max row" (maxRowProduct gridGet)
+  [ maxRowProduct gridGet
   , maxRowProduct (\(i, j) -> gridGet (j, i))
   , maxDiagProduct gridGet
   , maxDiagProduct (\(i, j) -> gridGet (i, 19 - j))
