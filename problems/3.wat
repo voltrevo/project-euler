@@ -1,5 +1,5 @@
 (module
-  (func (export "main") (result i64)
+  (func (export "main") (result i32)
     (local $n i64)
     (local $p i64)
     (local $fMax i64)
@@ -9,8 +9,10 @@
 
     (loop
       (if (i64.gt_u (i64.mul (get_local $p) (get_local $p)) (get_local $n))
-        (return
+        (then
           (call $i64_max_u (get_local $n) (get_local $fMax))
+          i32.wrap/i64
+          return
         )
       )
 
