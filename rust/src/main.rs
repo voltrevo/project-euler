@@ -1,5 +1,5 @@
-mod p1;
+mod p2;
 
 fn main() {
-    println!("{}", p1::calc());
+    println!("{}", p2::calc());
 }
