@@ -1,3 +1,5 @@
+use super::util;
+
 pub fn calc() -> i64 {
     let mut n = 600851475143;
 
@@ -10,28 +12,8 @@ pub fn calc() -> i64 {
             p_large = p;
         }
 
-        p = next_prime(p);
+        p = util::next_prime(p);
     }
 
     return p_large;
-}
-
-fn next_prime(mut p: i64) -> i64 {
-    if p == 2 {
-        return 3;
-    }
-
-    p += 2;
-    let mut i = 3;
-    
-    while i * i <= p {
-        if p % i == 0 {
-            i = 3;
-            p += 2;
-        } else {
-            i += 2;
-        }
-    }
-
-    return p;
 }
