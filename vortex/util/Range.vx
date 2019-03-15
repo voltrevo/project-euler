@@ -1,0 +1,9 @@
+return func(n) {
+  res := [];
+
+  for (i := 0u64; i < n; i++) {
+    res ++= [i];
+  }
+
+  return res;
+};

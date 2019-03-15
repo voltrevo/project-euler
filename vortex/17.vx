@@ -1,0 +1,84 @@
+import ./util/Range.vx;
+
+smallLens := [
+  null, // zero not used
+  'one':Length(),
+  'two':Length(),
+  'three':Length(),
+  'four':Length(),
+  'five':Length(),
+  'six':Length(),
+  'seven':Length(),
+  'eight':Length(),
+  'nine':Length(),
+  'ten':Length(),
+  'eleven':Length(),
+  'twelve':Length(),
+  'thirteen':Length(),
+  'fourteen':Length(),
+  'fifteen':Length(),
+  'sixteen':Length(),
+  'seventeen':Length(),
+  'eighteen':Length(),
+  'nineteen':Length(),
+];
+
+tenGroupLens := [
+  null, // zero not used
+  null, // one not used
+  'twenty':Length(),
+  'thirty':Length(),
+  'forty':Length(),
+  'fifty':Length(),
+  'sixty':Length(),
+  'seventy':Length(),
+  'eighty':Length(),
+  'ninety':Length(),
+];
+
+hundredLen := 'hundred':Length();
+andLen := 'and':Length();
+
+func WordLen(n) {
+  if (n < 20u64) {
+    return smallLens[n];
+  }
+
+  if (n < 100u64) {
+    digit := n % 10u64;
+    tenGroup := (n - digit) / 10u64;
+
+    len := tenGroupLens[tenGroup];
+
+    if (digit != 0u64) {
+      len += smallLens[digit];
+    }
+
+    return len;
+  }
+
+  if (n < 1000u64) {
+    rem := n % 100u64;
+    hundredGroup := (n - rem) / 100u64;
+
+    if (rem == 0u64) {
+      return smallLens[hundredGroup] + hundredLen;
+    }
+
+    return smallLens[hundredGroup] + hundredLen + andLen + WordLen(rem);
+  }
+
+  if (n == 1000u64) {
+    return 'onethousand':Length();
+  }
+
+  assert false;
+  return null; // TODO-1: Should be unreachable error
+};
+
+log.info (Range(1000u64)
+  :map(func(i) => WordLen(i + 1u64))
+  :reduce(+)
+);
+
+return 'done';

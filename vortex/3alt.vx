@@ -1,0 +1,23 @@
+// TODO: Support large u64 literals
+n := 600851u64 * 1000000u64 + 475143u64;
+i := 2u64;
+p := 1u64;
+
+for {
+  for (n % i == 0u64) {
+    n /= i;
+    p = i;
+  }
+
+  i++;
+
+  if (i * i > n) {
+    if (p > n) {
+      assert false;
+      return p;
+    }
+
+    assert n == 6857u64;
+    return n;
+  }
+}
