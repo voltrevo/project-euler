@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const fs = require('fs');
+const spawn = require('child_process').spawn;
+
+const promisify = require('util').promisify;
+const readFile = promisify(fs.readFile);
+
+(async () => {
+  const fName = await (async () => {
+    const arg = process.argv[2];
+
+    if (/\.wasm/.test(arg)) {
+      return arg;
+    }
+
+    const tmpFile = `/tmp/${Math.random().toString().slice(2)}.wasm`;
+
+    process.on('exit', () => {
+      fs.unlinkSync(tmpFile);
+    });
+
+    const child = spawn(
+      `${__dirname}/external/wat2wasm`,
+      [arg, '-o', tmpFile]
+    );
+
+    child.stdout.on('data', data => process.stdout.write(data));
+    child.stderr.on('data', data => process.stderr.write(data));
+
+    await new Promise((resolve, reject) => {
+      child.on('exit', code => {
+        if (code !== 0) {
+          reject(new Error('wat2wasm exited abnormally'));
+        } else {
+          resolve();
+        }
+      });
+    });
+
+    return tmpFile;
+  })();
+
+  const bytes = await readFile(fName);
+  const module = await WebAssembly.instantiate(bytes);
+  console.log(module.instance.exports.main());
+})().catch(console.error);
