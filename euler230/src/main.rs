@@ -14,23 +14,29 @@ fn get<T>() -> T where
     return trimmed.parse::<T>().unwrap();
 }
 
-fn solve(a: &str, b: &str, n: u128) -> char {
-    return find_digit(a, b, find_term_no(a, b, n), n);
-}
-
-fn find_term_no(a: &str, b: &str, n: u128) -> usize {
+fn solve(a: &str, b: &str, mut n: u128) -> char {
     let mut fib = (a.len() as u128, b.len() as u128);
-    let mut i = 2;
+    let mut term_no = 2;
 
     while fib.0 + fib.1 < n {
         fib = (fib.1, fib.0 + fib.1);
-        i += 1;
+        term_no += 1;
     }
 
-    return i;
-}
+    loop {
+        if n <= fib.0 {
+            term_no -= 2;
+            if term_no < 2 { break; }
+            fib = (fib.1 - fib.0, fib.0);
+            fib = (fib.1 - fib.0, fib.0);
+        } else {
+            term_no -= 1;
+            n -= fib.0;
+            if term_no < 2 { break; }
+            fib = (fib.1 - fib.0, fib.0);
+        }
+    }
 
-fn find_digit(a: &str, b: &str, term_no: usize, n: u128) -> char {
     if term_no == 0 {
         for (k, c) in a.chars().enumerate() {
             if (k + 1) as u128 == n {
@@ -48,22 +54,10 @@ fn find_digit(a: &str, b: &str, term_no: usize, n: u128) -> char {
             }
         }
 
-        panic!("Ran out of digits")
+        panic!("Ran out of digits");
     }
 
-    let mut fib = (a.len() as u128, b.len() as u128);
-    let mut i = 2;
-
-    while i < term_no {
-        fib = (fib.1, fib.0 + fib.1);
-        i += 1;
-    }
-
-    if n <= fib.0 {
-        return find_digit(a, b, term_no - 2, n);
-    }
-
-    return find_digit(a, b, term_no - 1, n - fib.0);
+    panic!("Unexpected term_no");
 }
 
 fn main() {
