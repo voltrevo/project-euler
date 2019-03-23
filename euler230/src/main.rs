@@ -59,7 +59,7 @@ fn find_digit(a: &str, b: &str, term_no: usize, n: u128) -> char {
         i += 1;
     }
 
-    if n < fib.0 {
+    if n <= fib.0 {
         return find_digit(a, b, term_no - 2, n);
     }
 
