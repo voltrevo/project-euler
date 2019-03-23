@@ -1,7 +1,8 @@
 use std::io;
 
-fn get<T>() -> T
-  where T: std::str::FromStr
+fn get<T>() -> T where
+  T: std::str::FromStr,
+  <T as std::str::FromStr>::Err: std::fmt::Debug
 {
     let mut input_text = String::new();
     io::stdin()
@@ -10,10 +11,7 @@ fn get<T>() -> T
 
     let trimmed = input_text.trim();
 
-    return match trimmed.parse::<T>() {
-        Ok(i) => i,
-        Err(..) => panic!("Parse failure"),
-    };
+    return trimmed.parse::<T>().unwrap();
 }
 
 fn main() {
