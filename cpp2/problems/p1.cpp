@@ -2,13 +2,14 @@
 #include <numeric>
 #include <iostream>
 
-using namespace std::views;
+#include "util/fold_left.hpp"
 
 int main() {
-    auto rng = iota(1, 1000)
-        | filter([](int x) { return x % 3 == 0 || x % 5 == 0; });
-    
-    int sum = std::accumulate(rng.begin(), rng.end(), 0);
+    using namespace std::views;
+
+    auto sum = iota(1, 1000)
+        | filter([](int x) { return x % 3 == 0 || x % 5 == 0; })
+        | fold_left(0, std::plus{});
 
     std::cout << sum << std::endl;
 
