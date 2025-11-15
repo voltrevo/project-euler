@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "util/gen_primes.hpp"
+#include "util/factorize.hpp"
 #include "util/generator.hpp"
 #include "util/fold_left.hpp"
 
@@ -16,23 +16,6 @@ int main() {
     std::cout << largest_factor << std::endl;
 
     return 0;
-}
-
-generator<int> factorize(uint64_t n) {
-    for (int p: gen_primes()) {
-        while (n % p == 0) {
-            n /= p;
-            co_yield p;
-        }
-
-        if (p * p > n) {
-            if (n > 1) {
-                co_yield n;
-            }
-
-            break;
-        }
-    }
 }
 
 template <typename T>
