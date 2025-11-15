@@ -1,0 +1,41 @@
+#include <iostream>
+
+#include "util/gen_primes.hpp"
+#include "util/generator.hpp"
+#include "util/fold_left.hpp"
+
+generator<int> factorize(uint64_t n);
+
+template <typename T>
+T max(T x, T y);
+
+int main() {
+    int largest_factor = factorize(600851475143ull)
+        | fold_left(0, max<int>);
+
+    std::cout << largest_factor << std::endl;
+
+    return 0;
+}
+
+generator<int> factorize(uint64_t n) {
+    for (int p: gen_primes()) {
+        while (n % p == 0) {
+            n /= p;
+            co_yield p;
+        }
+
+        if (p * p > n) {
+            if (n > 1) {
+                co_yield n;
+            }
+
+            break;
+        }
+    }
+}
+
+template <typename T>
+T max(T x, T y) {
+    return x > y ? x : y;
+}
