@@ -1,3 +1,5 @@
+#pragma once
+
 #include <ranges>
 
 template <typename State, typename Fn>

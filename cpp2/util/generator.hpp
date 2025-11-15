@@ -1,6 +1,6 @@
-// generator.hpp
 #pragma once
 #include <coroutine>
+#include <exception>
 #include <utility>
 
 template<typename T>
@@ -27,12 +27,23 @@ struct generator {
 
     explicit generator(handle_type h_) : h(h_) {}
     generator(const generator&) = delete;
+    generator& operator=(const generator&) = delete;
     generator(generator&& other) noexcept : h(std::exchange(other.h, {})) {}
+    generator& operator=(generator&& other) noexcept {
+        if (this != &other) {
+            if (h) h.destroy();
+            h = std::exchange(other.h, {});
+        }
+        return *this;
+    }
     ~generator() { if (h) h.destroy(); }
 
     struct iterator {
         handle_type h{};
         bool done = true;
+
+        using value_type = T;
+        using difference_type = std::ptrdiff_t;
 
         iterator() = default;
         explicit iterator(handle_type h_) : h(h_), done(!h_ || h_.done()) {}
@@ -42,6 +53,7 @@ struct generator {
             done = h.done();
             return *this;
         }
+        void operator++(int) { ++*this; }
         const T& operator*() const { return h.promise().current; }
         bool operator==(std::default_sentinel_t) const { return done; }
     };
@@ -55,3 +67,8 @@ struct generator {
     }
     std::default_sentinel_t end() { return {}; }
 };
+
+namespace std::ranges {
+    template<typename T>
+    inline constexpr bool enable_view<generator<T>> = true;
+}
